@@ -24,3 +24,12 @@ def send_email_for_verify(request, user):
         to=[user.email]
     )
     email.send()
+
+def security_code(length=4):
+    from random import choice
+    from string import ascii_letters, digits
+
+    alf = ascii_letters + digits
+    security_code = ''.join([choice(alf) for _ in range(length)])
+
+    return security_code
