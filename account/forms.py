@@ -49,19 +49,25 @@ class AuthenticationForm(DjangoAuthenticationForm):
 
 
 class UserCreationForm(UserCreationFormDjango):
-    email = forms.CharField(
+    email = forms.EmailField(
         label='',
-        widget=forms.TextInput(attrs={'placeholder': 'E-mail'})
+        widget=forms.EmailInput(attrs={'placeholder': 'Email'}),
+        error_messages={'unique': 'Этот Email уже зарегистрирован'}
     )
     password1 = forms.CharField(
         label='',
         strip=False,
-        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Password'}),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Пароль'}),
     )
     password2 = forms.CharField(
         label='',
-        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Password confirmation'}),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Подтвердить пароль'}),
         strip=False,
+    )
+    security_code = forms.CharField(
+        label='',
+        max_length=4,
+        widget=forms.TextInput(attrs={'placeholder': 'Код безопасности*'})
     )
 
     class Meta(UserCreationFormDjango.Meta):
