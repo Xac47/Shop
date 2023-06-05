@@ -1,10 +1,12 @@
 from django import forms
-from django.contrib.auth import get_user_model, authenticate
+from django.contrib.auth import get_user_model, authenticate, password_validation
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.forms import (
     AuthenticationForm as DjangoAuthenticationForm,
     UserCreationForm as UserCreationFormDjango,
-    UserChangeForm as UserChangeFormDjango
+    UserChangeForm as UserChangeFormDjango,
+    PasswordResetForm as PasswordResetFormDjango,
+    SetPasswordForm as SetPasswordFormDjango,
 )
 from django.core.exceptions import ValidationError
 
@@ -14,16 +16,23 @@ User = get_user_model()
 
 
 class AuthenticationForm(DjangoAuthenticationForm):
-    username = forms.CharField(
+    username = forms.EmailField(
+        max_length=120,
         label='',
-        widget=forms.TextInput(attrs={'placeholder': 'E-mail'})
+        widget=forms.EmailInput(attrs={'placeholder': 'Email'})
     )
 
     password = forms.CharField(
+        max_length=60,
         label='',
-        widget=forms.PasswordInput(attrs={'placeholder': 'Password'})
+        widget=forms.PasswordInput(attrs={'placeholder': 'Пароль'})
     )
 
+    security_code = forms.CharField(
+        label='',
+        max_length=4,
+        widget=forms.TextInput(attrs={'placeholder': 'Код безопасности*'})
+    )
     def clean(self):
         email = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -50,16 +59,19 @@ class AuthenticationForm(DjangoAuthenticationForm):
 
 class UserCreationForm(UserCreationFormDjango):
     email = forms.EmailField(
+        max_length=120,
         label='',
         widget=forms.EmailInput(attrs={'placeholder': 'Email'}),
         error_messages={'unique': 'Этот Email уже зарегистрирован'}
     )
     password1 = forms.CharField(
+        max_length=60,
         label='',
         strip=False,
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Пароль'}),
     )
     password2 = forms.CharField(
+        max_length=60,
         label='',
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Подтвердить пароль'}),
         strip=False,
@@ -79,3 +91,27 @@ class UserChangeForm(UserChangeFormDjango):
     class Meta:
         model = User
         fields = ('email',)
+
+
+class PasswordResetForm(PasswordResetFormDjango):
+    email = forms.EmailField(
+        label=_("Email"),
+        max_length=120,
+        widget=forms.EmailInput(attrs={"autocomplete": "email", 'placeholder': 'Email'}),
+    )
+
+
+class SetPasswordForm(SetPasswordFormDjango):
+    new_password1 = forms.CharField(
+        max_length=120,
+        label=_(""),
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Пароль*'}),
+        strip=False,
+        help_text=password_validation.password_validators_help_text_html(),
+    )
+    new_password2 = forms.CharField(
+        max_length=120,
+        label=_(""),
+        strip=False,
+        widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Подтвердите свой пароль*'}),
+    )
