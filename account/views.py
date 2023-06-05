@@ -8,7 +8,7 @@ from .forms import UserCreationForm, AuthenticationForm
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .utils import send_email_for_verify
+from .utils import send_email_for_verify, security_code
 
 User = get_user_model()
 
@@ -45,14 +45,31 @@ class SignUpView(View):
     template_name = 'registration/sign_up.html'
 
     def get(self, request):
+        code = security_code()
+        globals()['code'] = code
         context = {
-            'form': UserCreationForm()
+            'form': UserCreationForm(),
+            'security_code': list(code)
         }
-
         return render(request, self.template_name, context)
 
     def post(self, request):
+        try:
+            code = globals()['code']
+        except KeyError:
+            code = None
+
         form = UserCreationForm(request.POST)
+        """ Проверка кода безопасности """
+        if not code == request.POST.get('security_code'):
+            form.add_error('security_code', 'Не правильный код')
+            context = {
+                'form': UserCreationForm(),
+                'error_security_code': 'Не правильный код',
+            }
+            context['security_code'] = globals()['code'] = security_code()
+            return render(request, self.template_name, context)
+
         if form.is_valid():
             form.save()
             email = form.cleaned_data.get('email')
@@ -64,4 +81,5 @@ class SignUpView(View):
         context = {
             'form': form,
         }
+        context['security_code'] = globals()['code'] = security_code()
         return render(request, self.template_name, context)
