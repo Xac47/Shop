@@ -23,16 +23,11 @@ class AuthenticationForm(DjangoAuthenticationForm):
     )
 
     password = forms.CharField(
-        max_length=60,
+        max_length=64,
         label='',
         widget=forms.PasswordInput(attrs={'placeholder': 'Пароль'})
     )
 
-    security_code = forms.CharField(
-        label='',
-        max_length=4,
-        widget=forms.TextInput(attrs={'placeholder': 'Код безопасности*'})
-    )
     def clean(self):
         email = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -65,13 +60,15 @@ class UserCreationForm(UserCreationFormDjango):
         error_messages={'unique': 'Этот Email уже зарегистрирован'}
     )
     password1 = forms.CharField(
-        max_length=60,
+        min_length=9,
+        max_length=64,
         label='',
         strip=False,
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Пароль'}),
     )
     password2 = forms.CharField(
-        max_length=60,
+        min_length=9,
+        max_length=64,
         label='',
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Подтвердить пароль'}),
         strip=False,
@@ -103,14 +100,16 @@ class PasswordResetForm(PasswordResetFormDjango):
 
 class SetPasswordForm(SetPasswordFormDjango):
     new_password1 = forms.CharField(
-        max_length=120,
+        min_length=9,
+        max_length=64,
         label=_(""),
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Пароль*'}),
         strip=False,
         help_text=password_validation.password_validators_help_text_html(),
     )
     new_password2 = forms.CharField(
-        max_length=120,
+        min_length=9,
+        max_length=64,
         label=_(""),
         strip=False,
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Подтвердите свой пароль*'}),
