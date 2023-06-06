@@ -60,9 +60,10 @@ class SignUpView(View):
             code = None
 
         form = UserCreationForm(request.POST)
+
         """ Проверка кода безопасности """
         if not code == request.POST.get('security_code'):
-            form.add_error('security_code', 'Не правильный код')
+
             context = {
                 'form': UserCreationForm(),
                 'error_security_code': 'Не правильный код',
