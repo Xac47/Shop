@@ -5,8 +5,13 @@ from django.utils.translation import gettext_lazy as _
 from django.utils import timezone
 from .managers import UserManager
 
+# from phonenumber_field.modelfields import PhoneNumberField
+
 
 class User(AbstractBaseUser, PermissionsMixin):
+    first_name = models.CharField(_("first name"), max_length=150, blank=True)
+    last_name = models.CharField(_("last name"), max_length=150, blank=True)
+    # phone_number = PhoneNumberField(region='RU', verbose_name='Phone')
     email = models.EmailField(_('email address'), unique=True)
     email_verify = models.BooleanField(default=False)
 
