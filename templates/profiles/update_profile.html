@@ -53,6 +53,8 @@
                                     <h5>Детали учетной записи</h5>
                                 </div>
                                 <div class="card-body">
+                                    <b style="color: green;">{{messages|join:' '}}</b>
+
                                     <form method="post">
                                         {% csrf_token %}
                                         <div class="row">
