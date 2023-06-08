@@ -16,6 +16,7 @@ def send_email_for_verify(request, user):
         'token': token_generator.make_token(user),
 
     }
+    # визуализировать в строку
     message = render_to_string(
         'registration/verify_email.html',
         context)
