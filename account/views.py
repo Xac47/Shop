@@ -1,8 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.tokens import default_token_generator as token_generator
-from django.contrib.auth.views import LoginView
+from django.contrib.auth.views import LoginView, \
+    PasswordChangeView as PasswordChangeViewDjango
+from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
+from django.urls import reverse_lazy
 from django.utils.http import urlsafe_base64_decode
 
 from .forms import UserCreationForm, AuthenticationForm
@@ -84,3 +87,8 @@ class SignUpView(View):
         }
         context['security_code'] = globals()['code'] = security_code()
         return render(request, self.template_name, context)
+
+
+class PasswordChangeView(SuccessMessageMixin, PasswordChangeViewDjango):
+    success_url = reverse_lazy('password_change')
+    success_message = 'Пароль успешно изменен'
