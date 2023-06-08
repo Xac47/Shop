@@ -41,7 +41,7 @@
                                             <div class="chek-form">
                                                 {{form.security_code}}
                                                 {{form.security_code.errors}}
-                                                <b style="color: red;">{{error_security_code}}</b>
+                                                <b style="color: red;">{{messages|join:' '}}</b>
                                             </div>
                                             <span class="security-code">
                                                 {% for n in security_code %}
