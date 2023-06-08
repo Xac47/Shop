@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
@@ -40,9 +41,12 @@ def my_orders(request):
 def update_profile(request):
     profile = request.user
     form = UpdateDataProfileForm(instance=profile)
-    if request.POST:
+
+    if request.method == 'POST':
         form = UpdateDataProfileForm(request.POST, instance=profile)
-        form.save()
+        if form.is_valid():
+            messages.success(request, 'Данные успешно обновлены')
+            form.save()
 
     context = {
         'profile': profile,
