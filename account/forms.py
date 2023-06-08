@@ -1,4 +1,5 @@
 from django import forms
+from django.contrib import messages
 from django.contrib.auth import get_user_model, authenticate, password_validation
 from django.utils.translation import gettext_lazy as _
 from django.contrib.auth.forms import (
@@ -6,7 +7,7 @@ from django.contrib.auth.forms import (
     UserCreationForm as UserCreationFormDjango,
     UserChangeForm as UserChangeFormDjango,
     PasswordResetForm as PasswordResetFormDjango,
-    SetPasswordForm as SetPasswordFormDjango,
+    SetPasswordForm as SetPasswordFormDjango
 )
 from django.core.exceptions import ValidationError
 
@@ -28,6 +29,20 @@ class AuthenticationForm(DjangoAuthenticationForm):
         widget=forms.PasswordInput(attrs={'placeholder': 'Пароль'})
     )
 
+    error_messages = {
+        "invalid_login": _(
+            'Пожалуйста, введите правильный email и пароль. Учтите что оба поля могут быть чувствительны к регистру.'
+        ),
+        "inactive": _("Этот аккаунт не активен."),
+    }
+
+    def get_invalid_login_error(self):
+        return ValidationError(
+            self.error_messages['invalid_login'],
+            code="invalid_login",
+            params={"username": self.username_field.verbose_name},
+        )
+
     def clean(self):
         email = self.cleaned_data.get('username')
         password = self.cleaned_data.get('password')
@@ -39,6 +54,7 @@ class AuthenticationForm(DjangoAuthenticationForm):
                 password=password
             )
             if self.user_cache is None:
+                messages.error(self.request, 'Не верный логин или пароль')
                 raise self.get_invalid_login_error()
             if not self.user_cache.email_verify:
                 send_email_for_verify(self.request, self.user_cache),
