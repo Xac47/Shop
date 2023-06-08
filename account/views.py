@@ -1,3 +1,4 @@
+from django.contrib import messages
 from django.contrib.auth import login, authenticate, get_user_model
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.contrib.auth.views import LoginView
@@ -26,7 +27,7 @@ class EmailVerify(View):
             user.email_verify = True
             user.save()
             login(request, user)
-            return redirect('profile')
+            return redirect('profiles:profile')
         return redirect('invalid_verify')
 
     @staticmethod
@@ -63,10 +64,9 @@ class SignUpView(View):
 
         """ Проверка кода безопасности """
         if not code == request.POST.get('security_code'):
-
+            messages.error(self.request, 'Не правильный код')
             context = {
                 'form': UserCreationForm(),
-                'error_security_code': 'Не правильный код',
             }
             context['security_code'] = globals()['code'] = security_code()
             return render(request, self.template_name, context)
