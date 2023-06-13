@@ -1,12 +1,10 @@
 from django.db import models
 
-import uuid
-
 
 class BaseModel(models.Model):
-    uid = models.UUIDField(primary_key=True, editable=False, default=uuid.uuid4)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    slug = models.SlugField(max_length=150, unique=True)
 
     class Meta:
         abstract = True
@@ -14,3 +12,13 @@ class BaseModel(models.Model):
         indexes = [
             models.Index(fields=['-created_at'])
         ]
+
+
+class Social_links(models.Model):
+    instagram = models.URLField()
+    telegram = models.URLField()
+    facebook = models.URLField()
+    twitter = models.URLField()
+
+    class Meta:
+        abstract = True
