@@ -130,3 +130,15 @@ class SetPasswordForm(SetPasswordFormDjango):
         strip=False,
         widget=forms.PasswordInput(attrs={"autocomplete": "new-password", 'placeholder': 'Подтвердите свой пароль*'}),
     )
+
+
+class ChangeEmailForm(forms.ModelForm):
+    class Meta:
+        model = User
+        fields = ('email',)
+        labels = {
+            'email': ''
+        }
+        widgets = {
+            'email': forms.EmailInput()
+        }
