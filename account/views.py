@@ -1,5 +1,5 @@
 from django.contrib import messages
-from django.contrib.auth import login, authenticate, get_user_model
+from django.contrib.auth import login, authenticate, get_user_model, get_user
 from django.contrib.auth.tokens import default_token_generator as token_generator
 from django.contrib.auth.views import LoginView, \
     PasswordChangeView as PasswordChangeViewDjango
@@ -7,8 +7,9 @@ from django.contrib.messages.views import SuccessMessageMixin
 from django.core.exceptions import ValidationError
 from django.urls import reverse_lazy
 from django.utils.http import urlsafe_base64_decode
+from django.views.generic import UpdateView
 
-from .forms import UserCreationForm, AuthenticationForm
+from .forms import UserCreationForm, AuthenticationForm, ChangeEmailForm
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -92,3 +93,13 @@ class SignUpView(View):
 class PasswordChangeView(SuccessMessageMixin, PasswordChangeViewDjango):
     success_url = reverse_lazy('password_change')
     success_message = 'Пароль успешно изменен'
+
+
+class ChangeEmailView(SuccessMessageMixin, UpdateView):
+    form_class = ChangeEmailForm
+    template_name = 'registration/change_email.html'
+    success_message = 'Email успешно изменен'
+    success_url = reverse_lazy('change_email')
+
+    def get_object(self, queryset=None):
+        return self.request.user
