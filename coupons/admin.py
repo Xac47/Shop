@@ -1,8 +1,8 @@
 from django.contrib import admin
 
-from coupon.models import Coupon
+from coupons.models import Coupon
 
 
 @admin.register(Coupon)
 class CouponAdmin(admin.ModelAdmin):
-    
+    pass
