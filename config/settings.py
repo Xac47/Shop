@@ -43,8 +43,8 @@ INSTALLED_APPS = [
     'account.apps.AccountConfig',
     'product.apps.ProductConfig',
     'profiles.apps.ProfilesConfig',
-    'order.apps.OrderConfig',
-    'coupon.apps.CouponConfig',
+    'orders.apps.OrdersConfig',
+    'coupons.apps.CouponsConfig',
     'cart.apps.CartConfig',
 ]
 
@@ -84,8 +84,12 @@ WSGI_APPLICATION = 'config.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'Shop',
+        'USER': 'postgres',
+        'PASSWORD': 'hasbulat4732',
+        'HOST': 'localhost',
+        'PORT': '5432',
     }
 }
 
@@ -152,3 +156,8 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # EMAIL_USE_TLS = True
 # EMAIL_HOST_USER = 'email@gmail.com'
 # EMAIL_HOST_PASSWORD = 'password'
+
+
+# SESSI
+
+CART_SESSION_ID = 'cart'
