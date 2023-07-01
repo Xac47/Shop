@@ -1,6 +1,8 @@
 from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 
+from coupons.managers import ActiveManager
+
 
 class Coupon(models.Model):
     code = models.CharField('Купон', max_length=50, unique=True)
@@ -14,6 +16,7 @@ class Coupon(models.Model):
     # Managers
 
     objects = models.Manager()
+    active = ActiveManager()
 
     class Meta:
         ordering = ('-updated_at',)
