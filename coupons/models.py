@@ -19,7 +19,7 @@ class Coupon(models.Model):
     active = ActiveManager()
 
     class Meta:
-        ordering = ('-updated_at',)
+        ordering = ('-is_active',)
         indexes = [
             models.Index(fields=['-updated_at'])
         ]
