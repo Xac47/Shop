@@ -1,3 +1,10 @@
 from django.shortcuts import render
+from django.views.generic import ListView
 
-# Create your views here.
+from product.models import Product
+
+
+
+class HomeListView(ListView):
+    queryset = Product.published.all()
+    template_name = 'product/home_list.html'
