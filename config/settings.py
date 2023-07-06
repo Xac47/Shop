@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'phonenumber_field',
+    'autoslug',
 
     'account.apps.AccountConfig',
     'product.apps.ProductConfig',
