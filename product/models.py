@@ -15,7 +15,8 @@ User = get_user_model()
 
 class Category(BaseModel):
     name = models.CharField('Имя', max_length=200, unique=True)
-    slug = models.SlugField(max_length=200)
+    image = models.ImageField('Фото', upload_to='category_images/%Y/%m/%d/')
+    slug = models.SlugField(max_length=200, unique=True)
 
     class Meta:
         verbose_name = 'Категории'
@@ -27,7 +28,7 @@ class Category(BaseModel):
 
 class Tag(BaseModel):
     name = models.CharField('Name', max_length=100, unique=True)
-    slug = models.SlugField(max_length=200)
+    slug = models.SlugField(max_length=200, unique=True)
 
     class Meta:
         verbose_name = 'Тег'
@@ -44,7 +45,7 @@ class Product(BaseModel, ImageBaseModel):
 
     title = models.CharField('Заголовок', max_length=250)
     # slug = AutoSlugField(always_update=True, populate_from='title', max_length=250)
-    slug = models.SlugField(max_length=250, blank=True)
+    slug = models.SlugField(max_length=250)
     image = models.ImageField('Изображение', upload_to='product_images/%Y/%m/%d/%H/')
     desc = models.TextField('Описание')
     specifications = models.TextField('Характеристики')
