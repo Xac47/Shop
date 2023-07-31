@@ -1,0 +1,13 @@
+{% load product_tags %}
+<div class="search-style-2">
+    <form action="{% url 'product:search' %}">
+        <select class="select-active" name="category">
+            {% search_categories as categories %}
+            <option>Все категории</option>
+            {% for category in categories %}
+            <option>{{category}}</option>
+            {% endfor %}
+        </select>
+        <input type="text" placeholder="Поиск по элементам..." name="q"/>
+    </form>
+</div>

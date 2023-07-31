@@ -1,0 +1,25 @@
+<div class="categories-dropdown-wrap style-2 font-heading mt-30">
+    <div class="d-flex categori-dropdown-inner">
+        <ul>
+            {% for category in start_categories %}
+            <li>
+                <a href="{{category.get_absolute_url}}"> <img src="{{category.get_image}}" alt=""/>{{category}}</a>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    <div class="more_slide_open" style="display: none">
+        <div class="d-flex categori-dropdown-inner">
+            <ul>
+                {% for category in end_categories %}
+                <li>
+                    <a href="{{category.get_absolute_url}}"> <img src="{{category.get_image}}" alt=""/>{{category}}</a>
+                </li>
+                {% endfor %}
+            </ul>
+
+        </div>
+    </div>
+    <div class="more_categories"><span class="icon"></span> <span class="heading-sm-1">Show more...</span></div>
+</div>
+

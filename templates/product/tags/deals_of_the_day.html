@@ -1,0 +1,60 @@
+<section class="section-padding pb-5">
+    <div class="container">
+        <div class="section-title wow animate__animated animate__fadeIn" data-wow-delay="0">
+            <h3 class="">Предложения дня</h3>
+            <a class="show-all" href="{% url 'product:discount_product' %}">
+                Показать все
+                <i class="fi-rs-angle-right"></i>
+            </a>
+        </div>
+        <div class="row">
+            {% for product in products %}
+            <div class="col-xl-3 col-lg-4 col-md-6">
+                <div class="product-cart-wrap style-2 wow animate__animated animate__fadeInUp" data-wow-delay="0">
+                    <div class="product-img-action-wrap">
+                        <div class="product-img">
+                            <a href="{{product.get_absolute_url}}">
+                                <img src="{{product.get_image}}" alt=""/>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="product-content-wrap">
+                        <div class="deals-countdown-wrap">
+                            <div class="deals-countdown" data-countdown="2025/03/25 00:00:00"></div>
+                        </div>
+                        <div class="deals-content">
+                            <h2><a href="{{product.get_absolute_url}}">{{product.title}}</a></h2>
+                            <div class="product-rate-cover">
+                                <div class="product-rate d-inline-block">
+                                    <div class="product-rating" style="width: 90%"></div>
+                                </div>
+                                <span class="font-small ml-5 text-muted"> (4.0)</span>
+                            </div>
+                            <div>
+                                <span class="font-small text-muted">By <a
+                                        href="vendor-details-1.html">NestFood</a></span>
+                            </div>
+                            <div class="product-card-bottom">
+                                {% if not product.discount %}
+                                <div class="product-price">
+                                    <span>${{product.price}}</span>
+                                </div>
+                                {% else %}
+                                <div class="product-price">
+                                    <span>${{product.get_discount_price}}</span>
+                                    <span class="old-price">${{product.price}}</span>
+                                </div>
+                                {% endif %}
+                                <div class="add-cart">
+                                    <a class="add" href="shop-cart.html"><i class="fi-rs-shopping-cart mr-5"></i>Add
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
