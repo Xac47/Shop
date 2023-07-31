@@ -1,6 +1,8 @@
 from django.contrib import admin
+from django import forms
 from django.utils.safestring import mark_safe
 from django.utils.text import slugify
+from multiupload.fields import MultiFileField, MultiImageField
 
 from product.models import Product, ProductImages, Category, Tag
 
@@ -14,15 +16,25 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):
-    list_display = ('id', 'name', 'slug', 'get_image')
-    list_display_links = ('id', 'name', 'slug', 'get_image')
+    list_display = ('id', 'name', 'slug', 'get_image', 'get_image_svg')
+    list_display_links = ('id', 'name', 'slug', 'get_image', 'get_image_svg')
     readonly_fields = ('get_image',)
     prepopulated_fields = {'slug': ('name',)}
 
     def get_image(self, obj):
-        return mark_safe(f'<img src={obj.image.url} width="50" height="50">')
+        try:
+            return mark_safe(f'<img src={obj.image.url} width="50" height="50">')
+        except ValueError:
+            return mark_safe(f'<img src={obj.image} width="50" height="50">')
+
+    def get_image_svg(self, obj):
+        try:
+            return mark_safe(f'<img src={obj.image_svg.url} width="50" height="50">')
+        except ValueError:
+            return mark_safe(f'<img src={obj.image_svg} width="50" height="50">')
 
     get_image.short_description = "Изображение"
+    get_image_svg.short_description = "Изображение"
 
 
 class ProductImagesInline(admin.TabularInline):
@@ -36,14 +48,23 @@ class ProductImagesInline(admin.TabularInline):
     get_image.short_description = "Изображение"
 
 
+class ProductAdminForm(forms.ModelForm):
+    # image = MultiImageField(min_num=1, max_num=10)
+    image = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+
+    class Meta:
+        fields = '__all__'
+        model = Product
+
+
 @admin.register(Product)
 class ProductAdmin(admin.ModelAdmin):
     list_display = ('id', 'title', 'slug', 'status', 'category', 'price', 'author', 'get_image')
     list_display_links = ('id', 'title', 'slug', 'status', 'category', 'price', 'author', 'get_image')
     readonly_fields = ('get_image',)
+    form = ProductAdminForm
     inlines = (ProductImagesInline,)
     prepopulated_fields = {'slug': ('title',)}
-
     save_as = True
     save_on_top = True
 
