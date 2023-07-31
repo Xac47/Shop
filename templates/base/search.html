@@ -8,6 +8,6 @@
             <option>{{category}}</option>
             {% endfor %}
         </select>
-        <input type="text" placeholder="Поиск по элементам..." name="q"/>
+        <input type="text" placeholder="Поиск по элементам..." name="q" value="{{request.GET.q}}"/>
     </form>
 </div>
