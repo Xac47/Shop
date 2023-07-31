@@ -15,7 +15,7 @@ class Cart:
         product_id = str(product.id)
         self.cart_storage.add_product(
             product_id=product_id,
-            price=str(product.price),
+            price=str(product.get_discount_price()),
             quantity=quantity,
             update_quantity=update_quantity
         )
