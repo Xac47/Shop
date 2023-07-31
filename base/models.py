@@ -1,14 +1,18 @@
 from django.db import models
-from django.utils.safestring import mark_safe
 
 
 class ImageBaseModel(models.Model):
     image = None
+    image_svg = None
 
-    def get_image(self, width=50, height=50):
-        if self.image:
-            return mark_safe(f'<img src={self.image.url} width="{width}" height="{height}">')
-        return 'NO PHOTO'
+    @property
+    def get_image(self):
+        if self.image and hasattr(self.image, 'url'):
+            return self.image.url
+        if self.image_svg and hasattr(self.image_svg, 'url'):
+            return self.image_svg.url
+        else:
+            return 'static/assets/imgs/net-foto.jpg'
 
     class Meta:
         abstract = True
