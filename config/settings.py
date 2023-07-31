@@ -39,7 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
 
     'phonenumber_field',
-    'autoslug',
+    'multiupload',
 
     'account.apps.AccountConfig',
     'product.apps.ProductConfig',
@@ -88,7 +88,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.postgresql',
         'NAME': 'Shop',
         'USER': 'postgres',
-        'PASSWORD': 'password',
+        'PASSWORD': 'hasbulat4732',
         'HOST': 'localhost',
         'PORT': '5432',
     }
