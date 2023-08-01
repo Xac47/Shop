@@ -4,11 +4,18 @@ from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from multiupload.fields import MultiFileField, MultiImageField
 
-from product.models import Product, ProductImages, Category, Tag
+from product.models import Product, ProductImages, Category, Tag, Color, Specifications
 
 
 @admin.register(Tag)
 class TagAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'slug')
+    list_display_links = ('id', 'name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
+
+
+@admin.register(Color)
+class ColorAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug')
     list_display_links = ('id', 'name', 'slug')
     prepopulated_fields = {'slug': ('name',)}
@@ -37,6 +44,11 @@ class CategoryAdmin(admin.ModelAdmin):
     get_image_svg.short_description = "Изображение"
 
 
+class SpecificationsInline(admin.TabularInline):
+    model = Specifications
+    extra = 0
+
+
 class ProductImagesInline(admin.TabularInline):
     model = ProductImages
     extra = 0
@@ -63,7 +75,7 @@ class ProductAdmin(admin.ModelAdmin):
     list_display_links = ('id', 'title', 'slug', 'status', 'category', 'price', 'author', 'get_image')
     readonly_fields = ('get_image',)
     form = ProductAdminForm
-    inlines = (ProductImagesInline,)
+    inlines = (ProductImagesInline, SpecificationsInline)
     prepopulated_fields = {'slug': ('title',)}
     save_as = True
     save_on_top = True
@@ -72,3 +84,6 @@ class ProductAdmin(admin.ModelAdmin):
         return mark_safe(f'<img src={obj.image.url} width="50" height="50">')
 
     get_image.short_description = "Изображение"
+
+
+admin.site.register(Specifications)
