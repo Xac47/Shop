@@ -11,6 +11,17 @@ from product.managers import ManagerCustom
 User = get_user_model()
 
 
+class Color(BaseModel):
+    name = models.CharField('Цвет', max_length=120)
+    slug = models.SlugField(max_length=120, unique=True)
+
+    class Meta:
+        verbose_name = 'Цвет'
+        verbose_name_plural = 'Цвета'
+        indexes = [
+            models.Index(fields=['name', 'slug'])
+        ]
+
 class Category(BaseModel, ImageBaseModel):
     name = models.CharField('Имя', max_length=200, unique=True)
     image = models.ImageField('Фото jpg', upload_to='category_images/%Y/%m/%d/', blank=True, null=True)
@@ -56,7 +67,6 @@ class Product(BaseModel, ImageBaseModel):
     back_image = models.ImageField('Изображение сзади', upload_to='product_images/%Y/%m/%d/%H/')
 
     desc = models.TextField('Описание')
-    specifications = models.TextField('Характеристики')
     status = models.CharField('Статус', choices=Status.choices, default=Status.DRAFT, max_length=2)
 
     price = models.DecimalField('Цена', max_digits=10, decimal_places=2)
@@ -94,6 +104,23 @@ class Product(BaseModel, ImageBaseModel):
 
     def get_absolute_url(self):
         return reverse('product:product_detail', args=(self.category.slug, self.pk, self.slug))
+
+
+class Specifications(models.Model):
+    product = models.OneToOneField(Product, on_delete=models.CASCADE, verbose_name='Продукт',
+                                   related_name='specifications')
+    width = models.IntegerField(verbose_name='Ширина')
+    height = models.IntegerField(verbose_name='Высота')
+    depth = models.IntegerField(verbose_name='Глубина')
+    weight = models.IntegerField(verbose_name='Масса')
+    color = models.ManyToManyField(Color)
+
+    class Meta:
+        verbose_name = 'Характеристика'
+        verbose_name_plural = 'Характеристики'
+
+    def __str__(self):
+        return f'{self.product}'
 
 
 class ProductImages(models.Model):
