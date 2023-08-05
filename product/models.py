@@ -22,6 +22,10 @@ class Color(BaseModel):
             models.Index(fields=['name', 'slug'])
         ]
 
+    def __str__(self):
+        return str(self.name)
+
+
 class Category(BaseModel, ImageBaseModel):
     name = models.CharField('Имя', max_length=200, unique=True)
     image = models.ImageField('Фото jpg', upload_to='category_images/%Y/%m/%d/', blank=True, null=True)
