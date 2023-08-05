@@ -1,3 +1,4 @@
+from ckeditor.widgets import CKEditorWidget
 from django.contrib import admin
 from django import forms
 from django.utils.safestring import mark_safe
@@ -63,6 +64,7 @@ class ProductImagesInline(admin.TabularInline):
 class ProductAdminForm(forms.ModelForm):
     # image = MultiImageField(min_num=1, max_num=10)
     image = forms.FileField(widget=forms.ClearableFileInput(attrs={'multiple': True}))
+    desc = forms.CharField(widget=CKEditorWidget())
 
     class Meta:
         fields = '__all__'
