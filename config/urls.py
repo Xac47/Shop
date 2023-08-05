@@ -9,6 +9,8 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('', include('product.urls', namespace='product')),
     path('cart/', include('cart.urls', namespace='cart')),
+
+    path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
 
 if settings.DEBUG:
