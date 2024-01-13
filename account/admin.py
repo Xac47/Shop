@@ -15,13 +15,13 @@ class CustomUserAdmin(UserAdmin):
     list_display_links = ('id', 'first_name', 'last_name', 'email', 'email_verify', 'is_staff', 'is_active',)
     list_filter = ('first_name', 'last_name', 'email', 'email_verify', 'is_staff', 'is_active',)
     fieldsets = (
-        (None, {'fields': ('first_name', 'last_name', 'email', 'password')}),
+        (None, {'fields': ('first_name', 'last_name', 'image', 'email', 'password')}),
         ('Permissions', {'fields': ('email_verify', 'is_staff', 'is_active')}),
     )
     add_fieldsets = (
         (None, {
             'classes': ('wide',),
-            'fields': ('first_name', 'last_name', 'email', 'password1', 'password2', 'email_verify', 'is_staff', 'is_active')}
+            'fields': ('first_name', 'last_name', 'image', 'email', 'password1', 'password2', 'email_verify', 'is_staff', 'is_active')}
          ),
     )
     search_fields = ('email',)

@@ -1,7 +1,7 @@
 from django import template
-from django.db.models import Count
+from django.db.models import Count, Avg
 
-from product.models import Category, Product
+from product.models import Category, Product, Reviews
 
 register = template.Library()
 
@@ -34,5 +34,23 @@ def discount_products():
 @register.simple_tag
 def get_similar_products(product):
     post_tags = product.tags.values_list('id', flat=True)
-    similar_products = Product.published.filter(category=product.category, tags__in=post_tags).exclude(id=product.id)
+    similar_products = Product.published.filter(tags__in=post_tags).exclude(id=product.id)
     return similar_products.annotate(same_tags=Count('tags')).order_by('-same_tags')[:4]
+
+
+@register.simple_tag
+def get_review_star(star):
+    _dict_star = {
+        1: 20,
+        2: 40,
+        3: 60,
+        4: 80,
+        5: 100
+    }
+    return _dict_star.get(star)
+
+
+@register.simple_tag
+def get_average_rating(product):
+    rating = product.reviews.all().aggregate(rating=Avg('star'))
+    return 0 if rating is None else rating

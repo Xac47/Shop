@@ -5,7 +5,7 @@ from django.utils.safestring import mark_safe
 from django.utils.text import slugify
 from multiupload.fields import MultiFileField, MultiImageField
 
-from product.models import Product, ProductImages, Category, Tag, Color, Specifications
+from product.models import Product, ProductImages, Category, Tag, Color, Specifications, Size, Weight, Reviews
 
 
 @admin.register(Tag)
@@ -15,8 +15,22 @@ class TagAdmin(admin.ModelAdmin):
     prepopulated_fields = {'slug': ('name',)}
 
 
+@admin.register(Weight)
+class WeightAdmin(admin.ModelAdmin):
+    list_display = ('id', 'gram', 'slug')
+    list_display_links = ('id', 'gram', 'slug')
+    prepopulated_fields = {'slug': ('gram',)}
+
+
 @admin.register(Color)
 class ColorAdmin(admin.ModelAdmin):
+    list_display = ('id', 'name', 'slug')
+    list_display_links = ('id', 'name', 'slug')
+    prepopulated_fields = {'slug': ('name',)}
+
+
+@admin.register(Size)
+class SizeAdmin(admin.ModelAdmin):
     list_display = ('id', 'name', 'slug')
     list_display_links = ('id', 'name', 'slug')
     prepopulated_fields = {'slug': ('name',)}
@@ -67,7 +81,8 @@ class ProductAdminForm(forms.ModelForm):
     desc = forms.CharField(widget=CKEditorWidget())
 
     class Meta:
-        fields = '__all__'
+        # fields = '__all__'
+        exclude = ('slug',)
         model = Product
 
 
@@ -78,7 +93,7 @@ class ProductAdmin(admin.ModelAdmin):
     readonly_fields = ('get_image',)
     form = ProductAdminForm
     inlines = (ProductImagesInline, SpecificationsInline)
-    prepopulated_fields = {'slug': ('title',)}
+    # prepopulated_fields = {'slug': ('title',)}
     save_as = True
     save_on_top = True
 
@@ -89,3 +104,4 @@ class ProductAdmin(admin.ModelAdmin):
 
 
 admin.site.register(Specifications)
+admin.site.register(Reviews)

@@ -2,13 +2,31 @@ from django.contrib.auth import get_user_model
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
+from django.utils.text import slugify
 
+from base.functions import translit_to_eng
 from base.models import BaseModel, ImageBaseModel
 
 from base.svgfield import SVGField
 from product.managers import ManagerCustom
 
 User = get_user_model()
+
+
+class Weight(BaseModel):
+    gram = models.IntegerField('Масса')
+    slug = models.SlugField(max_length=120, unique=True)
+
+    class Meta:
+        ordering = ('gram',)
+        indexes = [
+            models.Index(fields=['gram', 'slug'])
+        ]
+        verbose_name = 'Масса'
+        verbose_name_plural = 'Массы'
+
+    def __str__(self):
+        return f'{self.gram}'
 
 
 class Color(BaseModel):
@@ -21,9 +39,26 @@ class Color(BaseModel):
         indexes = [
             models.Index(fields=['name', 'slug'])
         ]
+        ordering = ('name',)
 
     def __str__(self):
         return str(self.name)
+
+
+class Size(BaseModel):
+    name = models.CharField('Размер', max_length=10)
+    slug = models.SlugField(max_length=10, unique=True)
+
+    class Meta:
+        verbose_name = 'Размер'
+        verbose_name_plural = 'Размеры'
+        indexes = [
+            models.Index(fields=['name', 'slug'])
+        ]
+        ordering = ('name',)
+
+    def __str__(self):
+        return self.name
 
 
 class Category(BaseModel, ImageBaseModel):
@@ -65,13 +100,14 @@ class Product(BaseModel, ImageBaseModel):
         DRAFT = ('DF', 'Draft')
 
     title = models.CharField('Заголовок', max_length=250)
-    slug = models.SlugField(max_length=250)
+    slug = models.SlugField(max_length=250, blank=True)
 
     image = models.ImageField('Изображение', upload_to='product_images/%Y/%m/%d/%H/')
     back_image = models.ImageField('Изображение сзади', upload_to='product_images/%Y/%m/%d/%H/')
 
     desc = models.TextField('Описание')
     status = models.CharField('Статус', choices=Status.choices, default=Status.DRAFT, max_length=2)
+    quantity = models.PositiveSmallIntegerField('Количество', default=500)
 
     price = models.DecimalField('Цена', max_digits=10, decimal_places=2)
     discount = models.SmallIntegerField('Скидка', default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
@@ -79,6 +115,7 @@ class Product(BaseModel, ImageBaseModel):
     author = models.ForeignKey(User, verbose_name='Автор', on_delete=models.SET_NULL, null=True)
     category = models.ForeignKey(Category, verbose_name='Категория', on_delete=models.SET_NULL, null=True)
     tags = models.ManyToManyField(Tag, verbose_name='Теги')
+    favorites = models.ManyToManyField(User, verbose_name='Избранные', related_name='favorites', blank=True)
 
     # Managers
 
@@ -104,20 +141,25 @@ class Product(BaseModel, ImageBaseModel):
         return price
 
     def get_reviews(self):
-        return self.reviews.filter(parent__isnull=True)
+        return self.reviews.all()
 
     def get_absolute_url(self):
         return reverse('product:product_detail', args=(self.category.slug, self.pk, self.slug))
+
+    def save(self, *args, **kwargs):
+        self.slug = f'{self.pk}-{slugify(translit_to_eng(self.title))}'
+        super().save(*args, **kwargs)
 
 
 class Specifications(models.Model):
     product = models.OneToOneField(Product, on_delete=models.CASCADE, verbose_name='Продукт',
                                    related_name='specifications')
-    width = models.IntegerField(verbose_name='Ширина')
-    height = models.IntegerField(verbose_name='Высота')
-    depth = models.IntegerField(verbose_name='Глубина')
-    weight = models.IntegerField(verbose_name='Масса')
-    color = models.ManyToManyField(Color)
+    width = models.IntegerField('Ширина', blank=True)
+    height = models.IntegerField('Высота', blank=True)
+    depth = models.IntegerField('Глубина', blank=True)
+    weight = models.ManyToManyField(Weight, blank=True)
+    color = models.ManyToManyField(Color, blank=True)
+    size = models.ManyToManyField(Size, blank=True)
 
     class Meta:
         verbose_name = 'Характеристика'
@@ -140,7 +182,7 @@ class ProductImages(models.Model):
         return str(self.phote_number)
 
 
-class Rating(BaseModel):
+class Reviews(BaseModel):
     STAR = (
         (1, '⭐'),
         (2, '⭐⭐'),
@@ -149,24 +191,13 @@ class Rating(BaseModel):
         (5, '⭐⭐⭐⭐⭐')
     )
 
-    author = models.ForeignKey(User, verbose_name='Автор', on_delete=models.SET_NULL, null=True)
-    star = models.PositiveIntegerField(choices=STAR)
-    product = models.ForeignKey(Product, verbose_name="Продукт", on_delete=models.CASCADE, related_name="ratings")
-
-    class Meta:
-        verbose_name = "Рейтинг"
-        verbose_name_plural = "Рейтинги"
-
-    def __str__(self):
-        return f'{self.star}, {self.product}'
-
-
-class Reviews(BaseModel):
     author = models.ForeignKey(User, verbose_name='Автор', on_delete=models.CASCADE)
+    star = models.SmallIntegerField(choices=STAR, default=None)
     message = models.TextField("Сообщение", max_length=500)
-    parent = models.ForeignKey('self', verbose_name="Родитель", related_name='children', on_delete=models.CASCADE,
-                               blank=True, null=True)
     product = models.ForeignKey(Product, verbose_name="Продукт", related_name="reviews", on_delete=models.CASCADE)
+
+    # Managers
+    objects = models.Manager()
 
     class Meta:
         verbose_name = "Отзыв"
@@ -174,21 +205,3 @@ class Reviews(BaseModel):
 
     def __str__(self):
         return f'{self.message[:10]}, {self.author}'
-
-    def get_answers(self):
-        return self.children.all()
-
-
-class Favorites(BaseModel):
-    user = models.ForeignKey(User, on_delete=models.CASCADE, )
-    product = models.ForeignKey(Product, on_delete=models.CASCADE)
-
-    class Meta:
-        verbose_name = 'Избраный'
-        verbose_name_plural = 'Избраные'
-        indexes = [
-            models.Index(fields=['user', 'product'])
-        ]
-
-    def __str__(self):
-        return f'{self.user}, {self.product}'

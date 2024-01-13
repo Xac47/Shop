@@ -19,7 +19,7 @@
                     <div class="totall-product">
                         {% if product_list %}
                         <p>Мы нашли для вас <strong class="text-brand"> {{product_list.count}} </strong>товар{{product_list.count|pluralize:'ов'}}
-                        {% endif %}
+                            {% endif %}
                     </div>
                     <div class="sort-by-product-area">
                         <div class="sort-by-cover mr-10">
@@ -75,8 +75,14 @@
                                     </a>
                                 </div>
                                 <div class="product-action-1">
-                                    <a aria-label="Add To Wishlist" class="action-btn" href="shop-wishlist.html"><i
-                                            class="fi-rs-heart"></i></a>
+                                    <a aria-label="Add To Wishlist" class="action-btn hover-up"
+                                       href="{% url 'profiles:favorites_add_or_remove' product.id product.slug %}">
+                                        {% if not product in user.favorites.all %}
+                                        <i class="fi-rs-heart"></i>
+                                        {% else %}
+                                        <i class="fi fi-ss-heart"></i>
+                                        {% endif %}
+                                    </a>
                                     <a aria-label="Compare" class="action-btn" href="shop-compare.html"><i
                                             class="fi-rs-shuffle"></i></a>
                                     <a aria-label="Quick view" class="action-btn" data-bs-toggle="modal"

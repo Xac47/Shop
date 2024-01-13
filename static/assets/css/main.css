@@ -58,6 +58,12 @@ time, mark, audio, video {
   vertical-align: baseline;
 }
 
+input, button {
+    border: none;
+    outline: none;
+}
+
+
 thead {
   font-weight: 600;
 }
@@ -1643,7 +1649,7 @@ label {
 }
 
 .comments-area .thumb img {
-  width: 70px;
+  width: 100px;
   border-radius: 50%;
 }
 

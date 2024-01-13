@@ -3,9 +3,9 @@
     <form action="{% url 'product:search' %}">
         <select class="select-active" name="category">
             {% search_categories as categories %}
-            <option>Все категории</option>
+            <option value="">Все категории</option>
             {% for category in categories %}
-            <option>{{category}}</option>
+            <option value="{{ category.slug }}">{{category}}</option>
             {% endfor %}
         </select>
         <input type="text" placeholder="Поиск по элементам..." name="q" value="{{request.GET.q}}"/>
