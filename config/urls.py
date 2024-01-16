@@ -9,6 +9,7 @@ urlpatterns = [
     path('account/', include('account.urls')),
     path('', include('product.urls', namespace='product')),
     path('cart/', include('cart.urls', namespace='cart')),
+    path('subscribe-email/', include('subscribe_email.urls', namespace='subscribe_email')),
 
     path('ckeditor/', include('ckeditor_uploader.urls')),
 ]
