@@ -1,5 +1,5 @@
 ﻿{% extends 'base/base.html' %}
-{% load static product_tags %}
+{% load static product_tags subscribe_email_tags %}
 
 {% block menu %}
 <div class="main-menu main-menu-padding-1 main-menu-lh-2 d-none d-lg-block font-heading">
@@ -45,8 +45,10 @@
                                         продуктовые предложения
                                     </h1>
                                     <p class="mb-65">Подпишитесь на ежедневную рассылку</p>
-                                    <form class="form-subcriber d-flex">
-                                        <input type="email" placeholder="Ваш электронный адрес"/>
+                                    {% get_form_subscribe_email as form_subscribe_email %}
+                                    <form class="form-subcriber d-flex" method="post" action="{% url 'subscribe_email:add_subscribe_email' %}">
+                                        {% csrf_token %}
+                                        {{ form_subscribe_email }}
                                         <button class="btn" type="submit">Подписаться</button>
                                     </form>
                                 </div>
@@ -59,8 +61,10 @@
                                         Большие скидки
                                     </h1>
                                     <p class="mb-65">Скидка до 50% на первый заказ</p>
-                                    <form class="form-subcriber d-flex">
-                                        <input type="email" placeholder="Ваш электронный адрес"/>
+                                    {% get_form_subscribe_email as form_subscribe_email %}
+                                    <form class="form-subcriber d-flex" method="post" action="{% url 'subscribe_email:add_subscribe_email' %}">
+                                        {% csrf_token %}
+                                        {{ form_subscribe_email }}
                                         <button class="btn" type="submit">Подписаться</button>
                                     </form>
                                 </div>
