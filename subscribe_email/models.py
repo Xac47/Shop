@@ -10,6 +10,5 @@ class SubscribeEmail(BaseModel):
         verbose_name = 'Подписка на рассылку'
         verbose_name_plural = 'Подписки на рассылку'
 
-
     def __str__(self):
         return self.email
