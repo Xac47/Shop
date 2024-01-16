@@ -1,6 +1,6 @@
 <!DOCTYPE html>
 <html class="no-js" lang="en">
-{% load static product_tags %}
+{% load static product_tags subscribe_email_tags%}
 <head>
     <meta charset="utf-8"/>
     <title>{{title}}</title>
@@ -326,8 +326,10 @@
                             </h2>
                             <p class="mb-45">Start You'r Daily Shopping with <span class="text-brand">Nest Mart</span>
                             </p>
-                            <form class="form-subcriber d-flex">
-                                <input type="email" placeholder="Your emaill address"/>
+                            {% get_form_subscribe_email as form_subscribe_email %}
+                            <form class="form-subcriber d-flex" method="post" action="{% url 'subscribe_email:add_subscribe_email' %}">
+                                {% csrf_token %}
+                                {{ form_subscribe_email }}
                                 <button class="btn" type="submit">Subscribe</button>
                             </form>
                         </div>
