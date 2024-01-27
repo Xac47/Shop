@@ -6,100 +6,77 @@ from coupons.models import Coupon
 
 class Cart:
 
-    def __init__(self, session, cart_storage):
-        self.session = session
-        self.cart_storage = cart_storage
-        self.coupon_id = None
+    def __init__(self, request):
+        self.session = request.session
+        cart = self.session.get(settings.CART_SESSION_ID)
+        if not cart:
+            # сохранить пустую корзину в сеансе
+            cart = self.session[settings.CART_SESSION_ID] = {}
+        self.cart = cart
+        # сохранение текущего примененного купона
+        self.coupon_id = self.session.get('coupon_id')
 
     def add(self, product, quantity=1, update_quantity=False):
         product_id = str(product.id)
-        self.cart_storage.add_product(
-            product_id=product_id,
-            price=str(product.get_discount_price()),
-            quantity=quantity,
-            update_quantity=update_quantity
-        )
+        if product_id not in self.cart:
+            self.cart[product_id] = {'quantity': 0,
+                                     'price': str(product.get_discount_price())}
+        if update_quantity:
+            self.cart[product_id]['quantity'] = quantity
+        else:
+            self.cart[product_id]['quantity'] += quantity
         self.save()
+
+    def save(self):
+        # Обновление сессии cart
+        self.session[settings.CART_SESSION_ID] = self.cart
+        # Отметить сеанс как "измененный", чтобы убедиться, что он сохранен
+        self.session.modified = True
 
     def remove(self, product):
         product_id = str(product.id)
-        self.cart_storage.remove_product(product_id=product_id)
-        self.save()
+        if product_id in self.cart:
+            del self.cart[product_id]
+            self.save()
 
-    def get_items(self):
-        items = self.cart_storage.get_all_products()
-        products = Product.objects.filter(id__in=[item['product_id'] for item in items])
-        for item in items:
-            item['product'] = next(p for p in products if str(p.id) == item['product_id'])
+    def __iter__(self):
+        product_ids = self.cart.keys()
+        # получение объектов product и добавление их в корзину
+        products = Product.objects.filter(id__in=product_ids)
+        for product in products:
+            self.cart[str(product.id)]['product'] = product
+
+        for item in self.cart.values():
+            item['price'] = Decimal(item['price'])
+            item['total_price'] = item['price'] * item['quantity']
             yield item
 
-    def clear(self):
-        self.cart_storage.clear()
-        self.save()
-
-    def apply_coupon(self, coupon_code):
-        coupon = Coupon.objects.filter(code=coupon_code).first()
-        if not coupon:
-            return False  # неверный купон
-        self.coupon_id = coupon.id
-        self.save()
-        return True
+    def __len__(self):
+        return sum(item['quantity'] for item in self.cart.values())
 
     def get_total_price(self):
-        items = self.cart_storage.get_all_products()
-        total_price = sum(Decimal(item['price']) * item['quantity'] for item in items)
-        return total_price
-
-    def get_discount(self):
-        if not self.coupon_id:
-            return Decimal('0')
-        coupon = Coupon.objects.filter(id=self.coupon_id).first()
-        if not coupon:
-            return Decimal('0')  # неверный купон
-        discount = (coupon.discount / Decimal('100')) * self.get_total_price()
-        return discount
-
-    def get_total_price_after_discount(self):
-        total_price = self.get_total_price()
-        discount = self.get_discount()
-        total_price_after_discount = total_price - discount
-        return total_price_after_discount
-
-    def save(self):
-        self.cart_storage.save_cart_to_session(session=self.session, cart_id=settings.CART_SESSION_ID,
-                                               coupon_id=self.coupon_id)
-
-
-class CartStorage:
-
-    def __init__(self, session):
-        self.session = session
-
-    def add_product(self, product_id, price, quantity, update_quantity=False):
-        cart = self.session.get(settings.CART_SESSION_ID, {})
-        if product_id not in cart or not update_quantity:
-            cart[product_id] = {'quantity': 0}
-        cart[product_id]['quantity'] += quantity
-        cart[product_id]['price'] = price
-        self.session[settings.CART_SESSION_ID] = cart
-
-    def remove_product(self, product_id):
-        cart = self.session.get(settings.CART_SESSION_ID, {})
-        if product_id in cart:
-            del cart[product_id]
-            self.session[settings.CART_SESSION_ID] = cart
-
-    def get_all_products(self):
-        cart = self.session.get(settings.CART_SESSION_ID, {})
-        items = [{'product_id': k, 'quantity': v['quantity'], 'price': v['price']} for k, v in cart.items()]
-        return items
+        return sum(Decimal(item['price']) * item['quantity'] for item in
+                   self.cart.values())
 
     def clear(self):
+        # удаление корзины из сессии
         del self.session[settings.CART_SESSION_ID]
+        self.session.modified = True
 
-    def save_cart_to_session(self, session, cart_id, coupon_id=None):
-        session[cart_id] = {
-            'items': self.get_all_products(),
-            'coupon_id': coupon_id
-        }
-        session.modified = True
+    # Купон
+    @property
+    # Возвращается объект с id
+    def coupon(self):
+        if self.coupon_id:
+            return Coupon.objects.get(id=self.coupon_id)
+        return None
+
+    # Вычитает сумму со скидки
+    def get_discount(self):
+        if self.coupon:
+            return (self.coupon.discount / Decimal('100')) * self.get_total_price()
+        return Decimal('0')
+
+    # возвращаем общую сумму корзины после вычета суммы
+    def get_total_price_after_discount(self):
+        return self.get_total_price() - self.get_discount()
