@@ -27,6 +27,11 @@ class Cart:
             self.cart[product_id]['quantity'] += quantity
         self.save()
 
+    def get_product(self, product):
+        product_id = str(product.id)
+        if product_id in self.cart:
+            return self.cart[product_id]
+
     def save(self):
         # Обновление сессии cart
         self.session[settings.CART_SESSION_ID] = self.cart
@@ -61,14 +66,14 @@ class Cart:
     def clear(self):
         # удаление корзины из сессии
         del self.session[settings.CART_SESSION_ID]
+        del self.session['coupon_id']
         self.session.modified = True
 
     # Купон
     @property
-    # Возвращается объект с id
     def coupon(self):
         if self.coupon_id:
-            return Coupon.objects.get(id=self.coupon_id)
+            return Coupon.active.get(id=self.coupon_id)
         return None
 
     # Вычитает сумму со скидки
