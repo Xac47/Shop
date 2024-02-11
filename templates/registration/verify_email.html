@@ -1,8 +1,8 @@
 {% autoescape off %}
 
-Здраствуйте,
-Пожалуйста перейдите по ссылки чтобы закончить регистрацию
+    Здраствуйте,
+    Пожалуйста перейдите по ссылки чтобы закончить регистрацию
 
-http://{{ domain }}{% url 'verify_email' uidb64=uid token=token %}
+    http://{{ domain }}{% url 'verify_email' uidb64=uid token=token %}
 
 {% endautoescape %}

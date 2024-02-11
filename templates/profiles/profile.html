@@ -1,66 +1,35 @@
 {% extends 'base/base.html' %}
 
 {% block main %}
-<main class="main pages">
-    <div class="page-header breadcrumb-wrap">
-        <div class="container">
-            <div class="breadcrumb">
-                <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
-                <span></span> Pages <span></span> My Account
+    <main class="main pages">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="{% url 'product:home' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span> Pages <span></span> My Account
+                </div>
             </div>
         </div>
-    </div>
-    <div class="page-content pt-150 pb-150">
-        <div class="container">
-            <div class="row">
-                <div class="col-lg-10 m-auto">
-                    <div class="row">
-                        <div class="col-md-3">
-                            <div class="dashboard-menu">
-                                <ul class="nav flex-column" role="tablist">
-                                    <li class="nav-item">
-                                        <a class="nav-link active" href="{% url 'profiles:profile' %}"><i
-                                                class="fi-rs-settings-sliders mr-10"></i>Панель управлени</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'profiles:my_orders' %}"><i
-                                                class="fi-rs-shopping-bag mr-10"></i>Мои заказы</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'profiles:my_address' %}"><i
-                                                class="fi-rs-marker mr-10"></i>Мои адреса</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'profiles:update_profile' %}"><i
-                                                class="fi-rs-user mr-10"></i>Данные пользователя</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'change_email' %}"><i
-                                                class="fi-rs-user mr-10"></i>Изменить Email</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link"
-                                           href="{% url 'password_change' %}"><i class="fi-rs-user mr-10"></i>Изменить
-                                            пароль</a>
-                                    </li>
-                                    <li class="nav-item">
-                                        <a class="nav-link" href="{% url 'logout' %}"><i
-                                                class="fi-rs-sign-out mr-10"></i>Выход</a>
-                                    </li>
-                                </ul>
+        <div class="page-content pt-150 pb-150">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+                            <div class="col-md-3">
+                                {% include 'profiles/menu.html' %}
                             </div>
-                        </div>
-                        <div class="col-md-9">
-                            <div class="card">
-                                <div class="card-header">
-                                    <h3 class="mb-0">Здраствуйте {{user}}!</h3>
-                                </div>
-                                <div class="card-body">
-                                    <p>
-                                        Из панели управления вашей учетной записи. Вы можете легко проверить и
-                                        просмотреть свои последние заказы и изменить свой пароль и данные
-                                        учетной записи.
-                                    </p>
+                            <div class="col-md-9">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="mb-0">Здраствуйте {{ user }}!</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <p>
+                                            Из панели управления вашей учетной записи. Вы можете легко проверить и
+                                            просмотреть свои последние заказы и изменить свой пароль и данные
+                                            учетной записи.
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -68,6 +37,5 @@
                 </div>
             </div>
         </div>
-    </div>
-</main>
+    </main>
 {% endblock %}

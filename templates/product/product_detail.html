@@ -141,15 +141,19 @@
                                 {% endwith %}
 
                                 <div class="detail-extralink mb-50">
-                                    <div class="detail-qty border radius">
-                                        <a href="#" class="qty-down"><i class="fi-rs-angle-small-down"></i></a>
-                                        <input type="text" name="quantity" class="qty-val" value="1" min="1">
-                                        <a href="#" class="qty-up"><i class="fi-rs-angle-small-up"></i></a>
+
+                                    <div class="">
+                                        <form method="post" action="{% url 'cart:cart_add' object.id %}">
+                                        {% csrf_token %}
+                                            {{ form_quantity }}
+
                                     </div>
+                                    <button type="submit" class="button button-add-to-cart"><i
+                                            class="fi-rs-shopping-cart"></i>Add to cart
+                                    </button>
+                                    </form>
+
                                     <div class="product-extra-link2">
-                                        <button type="submit" class="button button-add-to-cart"><i
-                                                class="fi-rs-shopping-cart"></i>Add to cart
-                                        </button>
                                         <a aria-label="Add To Wishlist" class="action-btn hover-up"
                                            href="{% url 'profiles:favorites_add_or_remove' object.id object.slug %}">
                                             {% if not object in user.favorites.all %}
@@ -326,7 +330,8 @@
                                                         <div class="product-rating"
                                                              style="width: {{average_rating.rating}}%"></div>
                                                     </div>
-                                                    <h6>{{average_rating.rating|default_if_none:'0'|floatformat:'1'}} out of 5</h6>
+                                                    <h6>{{average_rating.rating|default_if_none:'0'|floatformat:'1'}}
+                                                        out of 5</h6>
                                                 </div>
                                                 <div class="progress">
                                                     <span>5 star</span>
