@@ -36,17 +36,6 @@ def my_address(request):
     return render(request, 'profiles/my_address.html', context)
 
 
-@login_required
-def my_orders(request):
-    profile = request.user
-
-    context = {
-        'profile': profile,
-    }
-
-    return render(request, 'profiles/my_orders.html', context)
-
-
 @method_decorator(login_required, name='dispatch')
 class UpdateProfileView(SuccessMessageMixin, UpdateView):
     form_class = UpdateDataProfileForm
