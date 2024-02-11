@@ -11,5 +11,5 @@ class SubscribeEmailForm(forms.ModelForm):
             'email': ''
         }
         widgets = {
-            'email': forms.EmailInput(attrs={'placeholder': 'Your emaill address'})
+            'email': forms.EmailInput(attrs={'placeholder': 'Ваш электронный адрес'})
         }
