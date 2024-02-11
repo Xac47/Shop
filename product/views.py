@@ -5,6 +5,7 @@ from django.shortcuts import render
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, TemplateView, FormView
 
+from cart.forms import CartAddProductForm
 from product.forms import ReviewForm
 from product.models import Product, Category, Reviews
 
@@ -49,7 +50,8 @@ class ProductFavoritesListView(LoginRequiredMixin, ListView):
 class ProductDetailView(DetailView):
     """" Товар """""
     extra_context = {
-        'form': ReviewForm()
+        'form': ReviewForm(),
+        'form_quantity': CartAddProductForm()
     }
 
     def get_queryset(self):
