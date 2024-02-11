@@ -1,71 +1,57 @@
-from django.shortcuts import render
-from django.http import HttpResponseRedirect
-from django.urls import reverse
-from django.contrib import messages
-from .cart import Cart, CartStorage
-
+from django.shortcuts import render, redirect, get_object_or_404
 from product.models import Product
-
-
-def cart_detail(request):
-    # Создаем экземпляр класса Cart
-    session = request.session
-    cart_storage = CartStorage(session)
-    cart = Cart(session, cart_storage)
-
-    return render(request, 'cart/cart_detail.html', {'cart': cart})
+from cart.cart import Cart
+from cart.forms import CartAddProductForm
+from coupons.forms import CouponApplyForm
 
 
 def cart_add(request, product_id):
-    # Получаем продукт по id
-    product = Product.published.get(id=product_id)
-    # Создаем экземпляр класса Cart
-    session = request.session
-    cart_storage = CartStorage(session)
-    cart = Cart(session, cart_storage)
-    # Добавляем продукт в корзину
-    cart.add(product=product)
-    # Перенаправляем на страницу корзины
-    return HttpResponseRedirect(reverse('cart:cart_detail'))
+    cart = Cart(request)
+    product = get_object_or_404(Product, id=product_id)
+    if request.method == 'POST':
+        form = CartAddProductForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            cart.add(product=product,
+                     quantity=cd['quantity'],
+                     update_quantity=cd['update'])
+    else:
+        cart.add(product=product)
+    return redirect('cart:cart_detail')
+
+
+def cart_update(request):
+    cart = Cart(request)
+    for item in cart:
+        form = CartAddProductForm(initial={'quantity': item['quantity'],
+                                           'update': True})
+        item['update_quantity_form'] = form
+    return redirect('cart:cart_detail')
 
 
 def cart_remove(request, product_id):
-    # Получаем продукт по id
-    product = Product.published.get(id=product_id)
-    # Создаем экземпляр класса Cart
-    session = request.session
-    cart_storage = CartStorage(session)
-    cart = Cart(session, cart_storage)
-    # Удаляем продукт из корзины
-    cart.remove(product=product)
-    # Перенаправляем на страницу корзины
-    return HttpResponseRedirect(reverse('cart:cart_detail'))
+    cart = Cart(request)
+    product = get_object_or_404(Product, id=product_id)
+    cart.remove(product)
+    return redirect('cart:cart_detail')
+
+
+def cart_detail(request):
+    cart = Cart(request)
+    for item in cart:
+        item['update_quantity_form'] = CartAddProductForm(
+            initial={'quantity': item['quantity'],
+                     'update': True}
+        )
+    coupon_apply_form = CouponApplyForm()  # Подключаем систему купонов
+    context = {
+        'cart': cart,
+        'coupon_apply_form': coupon_apply_form
+    }
+    return render(request, 'cart/cart_detail.html', context)
 
 
 def cart_clear(request):
-    # Создаем экземпляр класса Cart
-    session = request.session
-    cart_storage = CartStorage(session)
-    cart = Cart(session, cart_storage)
-    # Очищаем корзину
+    cart = Cart(request)
     cart.clear()
-    messages.success(request, "Корзина очищена.")
-    # Перенаправляем на страницу корзины
-    return HttpResponseRedirect(reverse('cart:cart_detail'))
-
-
-def apply_coupon(request):
-    if request.method == 'POST':
-        coupon_code = request.POST.get('coupon_code')
-        # Создаем экземпляр класса Cart
-        session = request.session
-        cart_storage = CartStorage(session)
-        cart = Cart(session, cart_storage)
-        # Применяем купон
-        result = cart.apply_coupon(coupon_code=coupon_code)
-        if result:
-            messages.success(request, "Купон применен успешно.")
-        else:
-            messages.error(request, "Неверный купон.")
-    # Перенаправляем на страницу корзины
-    return HttpResponseRedirect(reverse('cart:cart_detail'))
+    return redirect('cart:cart_detail')
