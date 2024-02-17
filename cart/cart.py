@@ -66,7 +66,8 @@ class Cart:
     def clear(self):
         # удаление корзины из сессии
         del self.session[settings.CART_SESSION_ID]
-        del self.session['coupon_id']
+        if self.session.get('coupon_id'):
+            del self.session['coupon_id']
         self.session.modified = True
 
     # Купон
