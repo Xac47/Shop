@@ -1,0 +1,31 @@
+{% extends 'base/base.html' %}
+
+{% block main %}
+    <main class="main container mb-80 mt-50">
+        <h1>Проверте</h1>
+        <div class="">
+            <h3>Ваш заказ</h3>
+
+            <div>
+                <h5>Товары</h5>
+                <hr>
+                <ul>
+                    {% for item in cart %}
+                        <li>
+                            <h5>{{ item.quantity }}x {{ item.product.title|truncatewords:2 }}</h5>
+                            <span>${{ item.total_price }}</span>
+                            <hr>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <p>Общая стоимость: <span>${{ cart.get_total_price }}</span></p>
+                <p>Общая стоимость с учетом скидки: <span>${{ cart.get_total_price_after_discount }}</span></p>
+            </div>
+        </div>
+        <form action="." method="post">
+            {{ form.as_p }}
+            <p><input type="submit" value="Place order"></p>
+            {% csrf_token %}
+        </form>
+    </main>
+{% endblock %}
