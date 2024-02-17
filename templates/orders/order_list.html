@@ -7,7 +7,7 @@
         <div class="page-header breadcrumb-wrap">
             <div class="container">
                 <div class="breadcrumb">
-                    <a href="index.html" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <a href="{% url 'product:home' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
                     <span></span> Pages <span></span> My Account
                 </div>
             </div>
@@ -23,42 +23,34 @@
                             <div class="col-md-9">
                                 <div class="card">
                                     <div class="card-header">
-                                        <h3 class="mb-0">Your Orders</h3>
+                                        <h3 class="mb-0">Ваши заказы</h3>
                                     </div>
                                     <div class="card-body">
                                         <div class="table-responsive">
                                             <table class="table">
                                                 <thead>
                                                 <tr>
-                                                    <th>Order</th>
-                                                    <th>Date</th>
-                                                    <th>Status</th>
-                                                    <th>Total</th>
-                                                    <th>Actions</th>
+                                                    <th>Заказ</th>
+                                                    <th>Дата</th>
+                                                    <th>Адрес</th>
+                                                    <th>Оплачен</th>
+                                                    <th>Итог</th>
+                                                    <th>Подробнее</th>
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                <tr>
-                                                    <td>#1357</td>
-                                                    <td>March 45, 2020</td>
-                                                    <td>Processing</td>
-                                                    <td>$125.00 for 2 item</td>
-                                                    <td><a href="#" class="btn-small d-block">View</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>#2468</td>
-                                                    <td>June 29, 2020</td>
-                                                    <td>Completed</td>
-                                                    <td>$364.00 for 5 item</td>
-                                                    <td><a href="#" class="btn-small d-block">View</a></td>
-                                                </tr>
-                                                <tr>
-                                                    <td>#2366</td>
-                                                    <td>August 02, 2020</td>
-                                                    <td>Completed</td>
-                                                    <td>$280.00 for 3 item</td>
-                                                    <td><a href="#" class="btn-small d-block">View</a></td>
-                                                </tr>
+                                                {% for order in orders %}
+                                                    <tr>
+                                                        <td>#{{ order.pk }}</td>
+                                                        <td>{{ order.created }}</td>
+                                                        <td>{{ order.address }}</td>
+                                                        <td>{% if order.paid %}Оплачен{% else %}Не
+                                                            оплачен{% endif %}</td>
+                                                        <th>{{ order.get_total_cost }}</th>
+                                                        <td><a href="{% url 'orders:order_detail' order.pk %}"
+                                                               class="btn-small d-block">View</a></td>
+                                                    </tr>
+                                                {% endfor %}
                                                 </tbody>
                                             </table>
                                         </div>
