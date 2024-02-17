@@ -1,0 +1,90 @@
+{% extends 'base/base.html' %}
+
+
+{% block main %}
+
+    <main class="main pages">
+        <div class="page-header breadcrumb-wrap">
+            <div class="container">
+                <div class="breadcrumb">
+                    <a href="{% url 'product:home' %}" rel="nofollow"><i class="fi-rs-home mr-5"></i>Home</a>
+                    <span></span> Pages <span></span> <a href="{% url 'profiles:profile' %}"> My Account</a>
+                    <span></span> Orders
+                </div>
+            </div>
+        </div>
+        <div class="page-content pt-150 pb-150">
+            <div class="container">
+                <div class="row">
+                    <div class="col-lg-10 m-auto">
+                        <div class="row">
+                            <div class="col-md">
+                                <div class="card">
+                                    <div class="card-header">
+                                        <h3 class="mb-0">Заказы на этот адрес</h3>
+                                    </div>
+                                    <div class="card-body">
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>Заказ</th>
+                                                    <th>Дата</th>
+                                                    <th>Город</th>
+                                                    <th>Адрес</th>
+                                                    <th>Фамилия</th>
+                                                    <th>Имя</th>
+                                                    <th>Почтовый индекс</th>
+                                                    <th>Оплачен</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    <td>#{{ order.pk }}</td>
+                                                    <td>{{ order.created }}</td>
+                                                    <td>{{ order.city }}</td>
+                                                    <td>{{ order.address }}</td>
+                                                    <td>{{ order.first_name }}</td>
+                                                    <td>{{ order.last_name }}</td>
+                                                    <td>{{ order.postal_code }}</td>
+                                                    <td>{% if order.paid %}Оплачен{% else %}Не оплачен{% endif %}</td>
+                                                </tr>
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                        <div class="table-responsive">
+                                            <table class="table">
+                                                <thead>
+                                                <tr>
+                                                    <th>Продукт</th>
+                                                    <th>Количество</th>
+                                                    <th>Цена</th>
+                                                </tr>
+                                                </thead>
+                                                <tbody>
+                                                <tr>
+                                                    {% for order_item in order_items %}
+                                                        <td>
+                                                            <a href="{% url 'product:product_detail' order_item.product.category.slug order_item.product.pk order_item.product.slug %}">
+                                                                {{ order_item.product.title|truncatewords:8 }}</a>
+                                                        </td>
+                                                        <td>{{ order_item.quantity }}</td>
+                                                        <td>${{ order_item.get_cost }}</td>
+                                                        </tr>
+                                                    {% endfor %}
+                                                </tbody>
+                                            </table>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+
+{% endblock %}
+
