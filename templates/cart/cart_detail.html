@@ -386,35 +386,38 @@
                         </div>
                     </div>
                 </div>
-                <div class="col-lg-4">
-                    <div class="border p-md-4 cart-totals ml-30">
-                        <div class="table-responsive">
-                            <table class="table no-border">
-                                <tbody>
-                                <tr>
-                                    <td class="cart_total_label">
-                                        <h6 class="text-muted">Промежуточный итог</h6>
-                                    </td>
-                                    <td class="cart_total_amount">
-                                        <h4 class="text-brand text-end">${{ cart.get_total_price }}</h4>
-                                    </td>
-                                </tr>
-                                <tr>
-                                    <td class="cart_total_label">
-                                        <h6 class="text-muted">Итог</h6>
-                                    </td>
-                                    <td class="cart_total_amount">
-                                        <h4 class="text-brand text-end">
-                                            ${{ cart.get_total_price_after_discount|floatformat:2 }}</h4>
-                                    </td>
-                                </tr>
-                                </tbody>
-                            </table>
+                {% if cart.get_total_price %}
+                    <div class="col-lg-4">
+                        <div class="border p-md-4 cart-totals ml-30">
+                            <div class="table-responsive">
+                                <table class="table no-border">
+                                    <tbody>
+                                    <tr>
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">Промежуточный итог</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h4 class="text-brand text-end">${{ cart.get_total_price }}</h4>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <td class="cart_total_label">
+                                            <h6 class="text-muted">Итог</h6>
+                                        </td>
+                                        <td class="cart_total_amount">
+                                            <h4 class="text-brand text-end">
+                                                ${{ cart.get_total_price_after_discount|floatformat:2 }}</h4>
+                                        </td>
+                                    </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <a href="{% url 'orders:order_create' %}" class="btn mb-20 w-100">Перейти к оформлению
+                                заказа<i
+                                        class="fi-rs-sign-out ml-15"></i></a>
                         </div>
-                        <a href="{% url 'orders:order_create' %}" class="btn mb-20 w-100">Перейти к оформлению заказа<i
-                                class="fi-rs-sign-out ml-15"></i></a>
                     </div>
-                </div>
+                {% endif %}
             </div>
         </div>
     </main>
