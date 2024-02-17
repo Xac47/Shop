@@ -25,3 +25,5 @@ __pycache__/
 
 media/*
 !*media
+
+erl_crash.dump
