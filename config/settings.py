@@ -24,7 +24,7 @@ SECRET_KEY = 'django-insecure-*a*r2uo+bpm_$(!2sqi03ki5x0nbmmp@j*s)2083k*itlsy0#j
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'www.localhost.com', 'plugins.jetbrains.com']
 
 # Application definition
 
@@ -162,3 +162,9 @@ EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 # SESSI
 
 CART_SESSION_ID = 'cart'
+
+
+# CELERY
+
+CELERY_BROKER_URL = "redis://localhost:6379"
+CELERY_RESULT_BACKEND = "redis://localhost:6379"
