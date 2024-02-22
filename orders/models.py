@@ -1,6 +1,9 @@
 from django.db import models
+from django.contrib.auth import get_user_model
 
 from product.models import Product
+
+User = get_user_model()
 
 
 class Order(models.Model):
@@ -9,11 +12,12 @@ class Order(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=20)
     address = models.CharField(max_length=250)
-    postal_code = models.CharField(max_length=20)
+    postal_code = models.CharField('Почтовый индекс', max_length=20)
     city = models.CharField(max_length=100)
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    paid = models.BooleanField(default=False)
+    paid = models.BooleanField('Оплаченный', default=False)
+    user = models.ForeignKey(User, related_name='orders', on_delete=models.SET_NULL, null=True)
 
     class Meta:
         ordering = ('-created',)
