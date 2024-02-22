@@ -30,7 +30,7 @@ def order_detail(request, order_id):
 @login_required()
 def order_create(request):
     cart = Cart(request)
-    if request.method == 'POST':
+    if request.method == 'POST' and cart.__len__():
         form = OrderCreateForm(request.POST)
         if form.is_valid():
             order = form.save(commit=False)
@@ -39,11 +39,11 @@ def order_create(request):
             for item in cart:
                 OrderItem.objects.create(order=order,
                                          product=item['product'],
-                                         price=item['price'],
+                                         price=item['discount_price'],
                                          quantity=item['quantity'])
             # очистка корзины
             cart.clear()
-            order_created.delay(order.id)
+            # order_created.delay(order.id)
             return render(request, 'orders/created.html',
                           {'order': order})
     else:
