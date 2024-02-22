@@ -39,7 +39,7 @@
                                                 </tr>
                                                 </thead>
                                                 <tbody>
-                                                {% for order in orders %}
+                                                {% for order in object_list %}
                                                     <tr>
                                                         <td>#{{ order.pk }}</td>
                                                         <td>{{ order.created }}</td>
