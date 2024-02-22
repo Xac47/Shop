@@ -22,10 +22,15 @@ def cart_add(request, product_id):
 
 def cart_update(request):
     cart = Cart(request)
-    for item in cart:
-        form = CartAddProductForm(initial={'quantity': item['quantity'],
-                                           'update': True})
-        item['update_quantity_form'] = form
+    if request.method == 'POST':
+        form = CartAddProductForm(request.POST)
+        if form.is_valid():
+            cd = form.cleaned_data
+            for item in cart:
+                if str(item['product'].id) == str(cd['product'].id):
+                    if cd['update']:
+                        item['quantity'] = cd['quantity']
+                    break
     return redirect('cart:cart_detail')
 
 
