@@ -54,10 +54,9 @@ class AuthenticationForm(DjangoAuthenticationForm):
                 password=password
             )
             if self.user_cache is None:
-                messages.error(self.request, 'Не верный логин или пароль')
                 raise self.get_invalid_login_error()
             if not self.user_cache.email_verify:
-                send_email_for_verify(self.request, self.user_cache),
+                send_email_for_verify(self.request, self.user_cache)
                 raise ValidationError(
                     'Вы не подтвердили email, проверьте свою почту!',
                     code='invalid_login',
