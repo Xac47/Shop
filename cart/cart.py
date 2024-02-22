@@ -54,6 +54,8 @@ class Cart:
         for item in self.cart.values():
             item['price'] = Decimal(item['price'])
             item['total_price'] = item['price'] * item['quantity']
+            item['discount_price'] = (self.coupon.discount / Decimal('100')) * (
+                    item['price'] * item['quantity']) if self.coupon else item['price'] * item['quantity']
             yield item
 
     def __len__(self):
