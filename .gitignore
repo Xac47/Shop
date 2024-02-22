@@ -27,3 +27,4 @@ media/*
 !*media
 
 erl_crash.dump
+dump.rdb
