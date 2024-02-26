@@ -403,10 +403,18 @@
                             <tr>
                             <tr>
                                 <td class="cart_total_label">
-                                    <h6 class="text-muted">Купон</h6>
+                                    <h6 class="text-muted">Скидка</h6>
                                 </td>
                                 <td class="cart_total_amount">
                                     <h4 class="text-brand text-end">{{ cart.coupon.discount }}%</h4>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td class="cart_total_label">
+                                    <h6 class="text-muted">Экономия</h6>
+                                </td>
+                                <td class="cart_total_amount">
+                                    <h4 class="text-brand text-end">${{ cart.get_saved_money }}</h4>
                                 </td>
                             </tr>
                             <tr>
@@ -415,7 +423,7 @@
                                 </td>
                                 <td class="cart_total_amount">
                                     <h4 class="text-brand text-end">
-                                        ${{ cart.get_total_price_after_discount|floatformat:2 }}</h4>
+                                        ${{ cart.get_total_price_after_discount }}</h4>
                                 </td>
                             </tr>
                             </tbody>
