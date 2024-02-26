@@ -54,8 +54,8 @@ class Cart:
         for item in self.cart.values():
             item['price'] = Decimal(item['price'])
             item['total_price'] = item['price'] * item['quantity']
-            item['discount_price'] = (self.coupon.discount / Decimal('100')) * (
-                    item['price'] * item['quantity']) if self.coupon else item['price'] * item['quantity']
+            item['discount_price'] = self.get_price_discount(item['total_price']) \
+                if self.coupon else item['total_price']
             yield item
 
     def __len__(self):
@@ -79,12 +79,16 @@ class Cart:
             return Coupon.active.get(id=self.coupon_id)
         return None
 
-    # Вычитает сумму со скидки
-    def get_discount(self):
+    def get_saved_money(self):
         if self.coupon:
-            return (self.coupon.discount / Decimal('100')) * self.get_total_price()
-        return Decimal('0')
+            return round((self.get_total_price() * self.coupon.discount) / Decimal('100'), 2)
+        return Decimal('0.00')
 
-    # возвращаем общую сумму корзины после вычета суммы
+    def get_price_discount(self, price):
+        if self.coupon:
+            return price * (100 - self.coupon.discount) / 100
+        return price
+
+    # возвращаем общую сумму корзины после вычета суммы скидки
     def get_total_price_after_discount(self):
-        return self.get_total_price() - self.get_discount()
+        return self.get_total_price() - self.get_saved_money()
