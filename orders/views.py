@@ -4,9 +4,13 @@ from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 from django.utils.decorators import method_decorator
 
+from django.contrib.admin.views.decorators import staff_member_required
+from django.shortcuts import get_object_or_404
+
 from .models import OrderItem
 from .forms import OrderCreateForm
 from cart.cart import Cart
+from .models import Order
 
 from .tasks import order_created
 
@@ -50,3 +54,11 @@ def order_create(request):
         form = OrderCreateForm
     return render(request, 'orders/create.html',
                   {'cart': cart, 'form': form})
+
+
+@staff_member_required
+def admin_order_detail(request, order_id):
+    order = get_object_or_404(Order, id=order_id)
+    return render(request,
+                  'admin/orders/order/detail.html',
+                  {'order': order})
