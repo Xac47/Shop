@@ -19,8 +19,9 @@
                     {% endfor %}
                 </ul>
                 <p>Общая стоимость: <span>${{ cart.get_total_price }}</span></p>
-                <p>Сэкономлено: <span>${{ cart.get_saved_money }}</span></p>
-                <p>Общая стоимость с учетом скидки: <span>${{ cart.get_total_price_after_discount|floatformat:2 }}</span></p>             
+                <p>Сэкономлено: <span>-${{ cart.get_saved_money }}</span></p>
+                <p>Общая стоимость с учетом скидки:
+                    <span>${{ cart.get_total_price_after_discount|floatformat:2 }}</span></p>
             </div>
         </div>
         <form action="." method="post">
