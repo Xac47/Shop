@@ -34,7 +34,7 @@ export_to_csv.short_description = 'Export to CSV'
 class OrderItemInline(admin.TabularInline):
     model = OrderItem
     raw_id_fields = ['product']
-
+    
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
