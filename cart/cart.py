@@ -54,8 +54,6 @@ class Cart:
         for item in self.cart.values():
             item['price'] = Decimal(item['price'])
             item['total_price'] = item['price'] * item['quantity']
-            item['discount_price'] = self.get_price_discount(item['total_price']) \
-                if self.coupon else item['total_price']
             yield item
 
     def __len__(self):
