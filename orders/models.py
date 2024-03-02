@@ -1,6 +1,10 @@
+from decimal import Decimal
+
+from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db import models
 from django.contrib.auth import get_user_model
 
+from coupons.models import Coupon
 from product.models import Product
 
 User = get_user_model()
@@ -18,6 +22,8 @@ class Order(models.Model):
     updated = models.DateTimeField(auto_now=True)
     paid = models.BooleanField('Оплаченный', default=False)
     user = models.ForeignKey(User, related_name='orders', on_delete=models.SET_NULL, null=True)
+    coupon = models.ForeignKey(Coupon, related_name='orders', on_delete=models.SET_NULL, blank=True, null=True)
+    discount = models.IntegerField(default=0, validators=[MinValueValidator(0), MaxValueValidator(100)])
 
     class Meta:
         ordering = ('-created',)
@@ -28,7 +34,8 @@ class Order(models.Model):
         return f'Заказ {self.id}'
 
     def get_total_cost(self):
-        return sum(item.price for item in self.items.all())
+        total_cost = sum(item.get_cost() for item in self.items.all())
+        return round(total_cost - total_cost * (self.discount / Decimal('100')), 2)
 
 
 class OrderItem(models.Model):
@@ -40,3 +47,5 @@ class OrderItem(models.Model):
     def __str__(self):
         return f'{self.id}'
 
+    def get_cost(self):
+        return self.price * self.quantity
