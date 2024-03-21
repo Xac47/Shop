@@ -88,6 +88,13 @@
                                 </div>
                             {% else %}
                                 <div class="header-action-icon-2">
+                                    <a class="mini-cart-icon" href="{% url 'cart:cart_detail' %}">
+                                        <img alt="Nest" src="{% static 'assets/imgs/theme/icons/icon-cart.svg' %}"/>
+                                        <span class="pro-count blue">{{ cart|length }}</span>
+                                    </a>
+                                    <a href="{% url 'cart:cart_detail' %}"><span class="lable">Корзина</span></a>
+                                </div>
+                                <div class="header-action-icon-2">
                                     <a href="{% url 'profiles:profile' %}">
                                         <img class="svgInject" alt="Nest"
                                              src="{% static 'assets/imgs/theme/icons/icon-user.svg' %}"/>
